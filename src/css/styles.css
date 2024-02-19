@@ -119,3 +119,12 @@
     transform: rotate(360deg);
   }
 }
+
+.loadMoreButton {
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+  opacity: 0;
+}

@@ -3,6 +3,25 @@ import { renderImages, renderMoreImages } from './render-functions';
 
 let currentPage = 1;
 
+const searchForm = document.querySelector('.searchForm');
+const loadMoreButton = document.querySelector('.load-more-button');
+
+searchForm.addEventListener('submit', async event => {
+  event.preventDefault();
+
+  await submitSearch();
+  showLoadMoreButton();
+});
+
+loadMoreButton.addEventListener('click', async () => {
+  await loadMoreImages();
+});
+
+function showLoadMoreButton() {
+  const loadMoreButton = document.querySelector('.load-more-button');
+  loadMoreButton.style.display = 'inline-block';
+}
+
 export async function submitSearch() {
   const searchInput = document.querySelector('.searchInput');
   const query = searchInput.value.trim();
@@ -38,6 +57,7 @@ export async function submitSearch() {
       });
     } else {
       renderImages(response.data.hits);
+      showLoadMoreButton();
     }
   } catch (error) {
     loader.style.display = 'none';
@@ -51,7 +71,6 @@ export async function submitSearch() {
 export async function loadMoreImages() {
   currentPage += 1;
 
-  const galleryContainer = document.querySelector('.gallery');
   const loader = document.querySelector('.loader');
   const searchInput = document.querySelector('.searchInput');
   const query = searchInput.value.trim();
@@ -71,6 +90,16 @@ export async function loadMoreImages() {
       });
     } else {
       renderMoreImages(response.data.hits);
+      const totalHits = response.data.totalHits || 0;
+      const displayedHits = currentPage * 15;
+      if (displayedHits >= totalHits) {
+        const loadMoreButton = document.querySelector('.loadMoreButton');
+        loadMoreButton.style.display = 'none';
+        iziToast.info({
+          message: "We're sorry, but you've reached the end of search results.",
+        });
+      }
+      smoothScrollToGallery();
     }
   } catch (error) {
     loader.style.display = 'none';
@@ -79,4 +108,19 @@ export async function loadMoreImages() {
       message: `An error occurred while fetching data: ${error.message}. Please try again later.`,
     });
   }
+}
+
+function smoothScrollToGallery() {
+  const galleryContainer = document.querySelector('.gallery');
+  const cardHeight = getCardHeight(galleryContainer);
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+
+function getCardHeight(element) {
+  const firstCard = element.querySelector('.image-card');
+  const rect = firstCard.getBoundingClientRect();
+  return rect.height;
 }

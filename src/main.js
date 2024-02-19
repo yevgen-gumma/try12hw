@@ -9,5 +9,5 @@ searchForm.addEventListener('submit', function (event) {
   submitSearch();
 });
 
-const loadMoreButton = document.querySelector('.loadMoreButton');
+const loadMoreButton = document.querySelector('.load-more-button');
 loadMoreButton.addEventListener('click', loadMoreImages);
