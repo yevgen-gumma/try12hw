@@ -3,30 +3,12 @@ import { renderImages, renderMoreImages } from './render-functions';
 
 let currentPage = 1;
 
-const searchForm = document.querySelector('.searchForm');
-const loadMoreButton = document.querySelector('.load-more-button');
-
-searchForm.addEventListener('submit', async event => {
-  event.preventDefault();
-
-  await submitSearch();
-  showLoadMoreButton();
-});
-
-loadMoreButton.addEventListener('click', async () => {
-  await loadMoreImages();
-});
-
-function showLoadMoreButton() {
-  const loadMoreButton = document.querySelector('.load-more-button');
-  loadMoreButton.style.display = 'inline-block';
-}
-
 export async function submitSearch() {
   const searchInput = document.querySelector('.searchInput');
   const query = searchInput.value.trim();
   const loader = document.querySelector('.loader');
   const galleryContainer = document.querySelector('.gallery');
+  const loadMoreButton = document.querySelector('.load-more-button');
 
   if (query === '') {
     iziToast.show({
@@ -57,7 +39,7 @@ export async function submitSearch() {
       });
     } else {
       renderImages(response.data.hits);
-      showLoadMoreButton();
+      loadMoreButton.style.visibility = 'visible';
     }
   } catch (error) {
     loader.style.display = 'none';
